@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn-animation {
+    @apply transition-all duration-200 ease-in-out;
+}
+
+.btn-animation:hover {
+    @apply transform scale-105;
+}
+
+.btn-animation:active {
+    @apply transform scale-95;
+}
