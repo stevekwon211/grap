@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 
-export const parseCSV = (file: File): Promise<any> => {
+export const parseCSV = (file: File): Promise<Record<string, string | number>[]> => {
     return new Promise((resolve, reject) => {
         Papa.parse(file, {
             complete: (results) => {
@@ -8,12 +8,14 @@ export const parseCSV = (file: File): Promise<any> => {
                     reject(results.errors);
                 } else {
                     const [headers, ...rows] = results.data as string[][];
-                    const labels = rows.map((row) => row[0]); // Assume first column is labels
-                    const datasets = headers.slice(1).map((header, index) => ({
-                        label: header,
-                        data: rows.map((row) => parseFloat(row[index + 1]) || 0),
-                    }));
-                    resolve({ labels, datasets });
+                    const parsedData = rows.map((row) => {
+                        const rowData: Record<string, string | number> = {};
+                        headers.forEach((header, index) => {
+                            rowData[header] = isNaN(Number(row[index])) ? row[index] : Number(row[index]);
+                        });
+                        return rowData;
+                    });
+                    resolve(parsedData);
                 }
             },
             header: false,

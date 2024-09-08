@@ -12,7 +12,6 @@ interface SidebarProps {
     onTextSizeChange: (size: string) => void;
     onFileUpload: (file: File) => void;
     onAspectRatioChange: (ratio: string) => void;
-    currentAspectRatio: string;
     onChartTitleChange: (title: string) => void;
     onXAxisLabelChange: (label: string) => void;
     onYAxisLabelChange: (label: string) => void;
@@ -29,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     onTextSizeChange,
     onFileUpload,
     onAspectRatioChange,
-    currentAspectRatio,
+    // Remove currentAspectRatio from props if not used
     onChartTitleChange,
     onXAxisLabelChange,
     onYAxisLabelChange,

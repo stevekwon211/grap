@@ -9,7 +9,7 @@ import { Chart } from "chart.js/auto";
 const GraphRenderer = dynamic(() => import("./components/GraphRenderer"), { ssr: false });
 
 function App() {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<Record<string, string | number>[] | null>(null);
     const [error, setError] = useState<string | null>(null);
     const chartRef = useRef<HTMLCanvasElement | null>(null);
     const [chartType, setChartType] = useState("line");
@@ -21,14 +21,16 @@ function App() {
     const [yAxisLabel, setYAxisLabel] = useState("");
     const [graphColor, setGraphColor] = useState("#FF6384"); // 기본 색상 설정
 
-    const handleFileUpload = async (file: File) => {
-        try {
-            const parsedData = await parseCSV(file);
-            setData(parsedData);
-            setError(null);
-        } catch (err) {
-            setError("Error parsing CSV file. Please check the file format.");
-            setData(null);
+    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            try {
+                const parsedData = await parseCSV(event.target.files[0]);
+                setData(parsedData);
+                setError(null);
+            } catch (err) {
+                setError("Error parsing CSV file. Please check the file format.");
+                setData(null);
+            }
         }
     };
 
