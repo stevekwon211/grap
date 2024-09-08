@@ -130,10 +130,13 @@ function App() {
             data: rawData.map((row) => Number(row[header]) || 0),
         }));
 
-        return {
+        const transformedData = {
             labels,
             datasets,
         };
+
+        console.log("Transformed Data:", transformedData);
+        return transformedData;
     };
 
     return (
@@ -158,18 +161,20 @@ function App() {
                 {error && <p className="text-red-500">{error}</p>}
                 {data && (
                     <div style={{ width: "100%", height: "100%", maxWidth: "1600px", maxHeight: "1200px" }}>
-                        <GraphRenderer
-                            data={transformData(data)}
-                            chartRef={chartRef}
-                            chartType={chartType}
-                            theme={theme}
-                            textSize={textSize}
-                            aspectRatio={aspectRatio}
-                            chartTitle={chartTitle}
-                            xAxisLabel={xAxisLabel}
-                            yAxisLabel={yAxisLabel}
-                            graphColor={graphColor}
-                        />
+                        {transformData(data) && (
+                            <GraphRenderer
+                                data={transformData(data)}
+                                chartRef={chartRef}
+                                chartType={chartType}
+                                theme={theme}
+                                textSize={textSize}
+                                aspectRatio={aspectRatio}
+                                chartTitle={chartTitle}
+                                xAxisLabel={xAxisLabel}
+                                yAxisLabel={yAxisLabel}
+                                graphColor={graphColor}
+                            />
+                        )}
                     </div>
                 )}
             </div>

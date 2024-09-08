@@ -36,6 +36,7 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({
     yAxisLabel,
     graphColor,
 }) => {
+    console.log("GraphRenderer Data:", data);
     const chartInstance = useRef<Chart | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -117,19 +118,6 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({
                         },
                         scales: {
                             x: {
-                                type: "time",
-                                time: {
-                                    unit: "day",
-                                    parser: "yyyy-MM-dd",
-                                    displayFormats: {
-                                        day: "yyyy-MM-dd",
-                                    },
-                                },
-                                adapters: {
-                                    date: {
-                                        locale: enUS,
-                                    },
-                                },
                                 title: {
                                     display: xAxisLabel !== "",
                                     text: xAxisLabel,
