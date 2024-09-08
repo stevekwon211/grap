@@ -52,9 +52,9 @@ interface SelectItemProps {
     onClick?: () => void;
 }
 
-export const SelectItem: React.FC<SelectItemProps> = ({ children, onClick }) => {
+export const SelectItem: React.FC<SelectItemProps> = ({ value, children, onClick }) => {
     return (
-        <div onClick={onClick} className="px-3 py-2 cursor-pointer hover:bg-gray-100">
+        <div onClick={() => onClick && onClick(value)} className="px-3 py-2 cursor-pointer hover:bg-gray-100">
             {children}
         </div>
     );

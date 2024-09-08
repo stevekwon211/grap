@@ -12,6 +12,7 @@ interface SidebarProps {
     onTextSizeChange: (size: string) => void;
     onFileUpload: (file: File) => void;
     onAspectRatioChange: (ratio: string) => void;
+    currentAspectRatio: string; // 이 줄을 추가합니다
     onChartTitleChange: (title: string) => void;
     onXAxisLabelChange: (label: string) => void;
     onYAxisLabelChange: (label: string) => void;
@@ -36,6 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     xAxisLabel,
     yAxisLabel,
     onColorChange,
+    currentAspectRatio, // 이 줄을 추가합니다
 }) => {
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [currentColor, setCurrentColor] = useState("#FF6384");
