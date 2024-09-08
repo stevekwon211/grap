@@ -3,14 +3,15 @@
 import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { DayPicker } from "react-day-picker";
-
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+
+// utils.ts 파일을 만들어 cn 함수를 정의하세요
+// button.tsx 파일을 만들어 buttonVariants를 정의하세요
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
-    // Remove unused props or use them if needed
     return (
         <DayPicker
             showOutsideDays={showOutsideDays}

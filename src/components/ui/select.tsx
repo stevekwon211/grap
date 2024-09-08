@@ -32,7 +32,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         {React.Children.map(children, (child) => {
                             if (React.isValidElement(child) && "value" in child.props) {
                                 return React.cloneElement(child, {
-                                    onClick: () => handleSelect(child.props.value),
+                                    onClick: () => handleSelect(child.props.value as string),
                                 });
                             }
                             return child;

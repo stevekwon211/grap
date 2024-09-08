@@ -21,17 +21,16 @@ function App() {
     const [yAxisLabel, setYAxisLabel] = useState("");
     const [graphColor, setGraphColor] = useState("#FF6384"); // 기본 색상 설정
 
-    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files[0]) {
-            try {
-                const parsedData = await parseCSV(event.target.files[0]);
+    const handleFileUpload = (file: File) => {
+        parseCSV(file)
+            .then((parsedData) => {
                 setData(parsedData);
                 setError(null);
-            } catch (err) {
+            })
+            .catch((err) => {
                 setError("Error parsing CSV file. Please check the file format.");
                 setData(null);
-            }
-        }
+            });
     };
 
     const handleCopy = () => {
@@ -139,7 +138,15 @@ function App() {
                 {data && (
                     <div style={{ width: "100%", height: "100%", maxWidth: "1600px", maxHeight: "1200px" }}>
                         <GraphRenderer
-                            data={data}
+                            data={{
+                                labels: data.map((item) => item.label as string),
+                                datasets: [
+                                    {
+                                        label: "Data",
+                                        data: data.map((item) => Number(item.value)),
+                                    },
+                                ],
+                            }}
                             chartRef={chartRef}
                             chartType={chartType}
                             theme={theme}
