@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-interface SelectProps {
+interface SelectProps extends React.HTMLAttributes<HTMLSelectElement> {
     onValueChange: (value: string) => void;
     children: React.ReactNode;
     placeholder?: string;
     className?: string;
 }
 
-export const Select: React.forwardRef<HTMLSelectElement, React.HTMLAttributes<HTMLSelectElement>>(
-    ({ className, ...props }, ref) => {
+export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
+    ({ className, children, placeholder, onValueChange, ...props }, ref) => {
         const [isOpen, setIsOpen] = useState(false);
         const [selectedValue, setSelectedValue] = useState("");
 
@@ -60,7 +60,9 @@ export const SelectItem: React.FC<SelectItemProps> = ({ children, onClick }) => 
 export const SelectTrigger: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
     <div className={className}>{children}</div>
 );
+
 export const SelectContent: React.FC<{ children: React.ReactNode }> = ({ children }) => <>{children}</>;
+
 export const SelectValue: React.FC<{ children?: React.ReactNode; placeholder?: string }> = ({
     children,
     placeholder,
