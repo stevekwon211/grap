@@ -2,7 +2,7 @@
 const nextConfig = {
     reactStrictMode: true,
     webpack: (config) => {
-        config.resolve.alias["@"] = require("path").resolve(__dirname, "src");
+        config.resolve.alias["@"] = require("path").resolve(__dirname);
         return config;
     },
 };
