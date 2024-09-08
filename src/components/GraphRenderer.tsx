@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { Chart, ChartConfiguration, ChartTypeRegistry } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
-import { enUS } from "date-fns/locale";
+// import { enUS } from "date-fns/locale";  // 이 줄을 제거하거나 주석 처리합니다.
 
 interface GraphRendererProps {
     data: {
@@ -133,6 +133,11 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({
                                     color: theme === "dark" ? "white" : "black",
                                     maxRotation: 45,
                                     minRotation: 45,
+                                },
+                                adapters: {
+                                    date: {
+                                        locale: enUS,
+                                    },
                                 },
                             },
                             y: {
