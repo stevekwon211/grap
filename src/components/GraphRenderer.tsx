@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { Chart, ChartConfiguration, ChartTypeRegistry } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
-// import { enUS } from "date-fns/locale";  // 이 줄을 제거하거나 주석 처리합니다.
+import { enUS } from "date-fns/locale"; // 이 줄을 추가합니다.
 
 interface GraphRendererProps {
     data: {
