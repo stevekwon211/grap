@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useRef } from "react";
 import { Button } from "@/components/ui/button";
 
 interface FileUploadProps {
@@ -6,6 +6,8 @@ interface FileUploadProps {
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -13,12 +15,22 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
         }
     };
 
+    const handleButtonClick = () => {
+        fileInputRef.current?.click();
+    };
+
     return (
         <div>
-            <Button asChild className="w-full btn-animation">
-                <label htmlFor="file-upload">Upload CSV</label>
+            <Button onClick={handleButtonClick} className="w-full btn-primary">
+                Upload CSV
             </Button>
-            <input id="file-upload" type="file" accept=".csv" onChange={handleFileChange} style={{ display: "none" }} />
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+            />
         </div>
     );
 };

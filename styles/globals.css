@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    background-color: #ffffff;
+}
+
 .btn-animation {
     @apply transition-all duration-200 ease-in-out;
 }
@@ -12,4 +16,29 @@
 
 .btn-animation:active {
     @apply transform scale-95;
+}
+
+.btn-gradient {
+    background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
+    color: #333;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(145deg, #e6e6e6, #d9d9d9);
+}
+
+.sidebar {
+    background-color: #f9f9f9;
+}
+
+.space-y-2 > * + * {
+    margin-top: 0.5rem;
+}
+
+.space-y-4 > * + * {
+    margin-top: 1rem;
 }
