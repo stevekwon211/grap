@@ -2,15 +2,17 @@
 
 import React, { useEffect, useRef } from "react";
 import { Chart, ChartConfiguration, ChartTypeRegistry } from "chart.js/auto";
+import "chartjs-adapter-date-fns";
+import { enUS } from "date-fns/locale";
 
 interface GraphRendererProps {
     data: {
         labels: string[];
-        datasets: Array<{
+        datasets: {
             label: string;
-            data: number[];
-        }>;
-    };
+            data: { x: string; y: number }[];
+        }[];
+    } | null;
     chartRef: React.RefObject<HTMLCanvasElement>;
     chartType: string;
     theme: string;
@@ -73,23 +75,25 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({
 
                 const config: ChartConfiguration = {
                     type: chartType as keyof ChartTypeRegistry,
-                    data: {
-                        ...data,
-                        datasets: data.datasets.map((dataset) => ({
-                            ...dataset,
-                            backgroundColor: chartType === "bar" ? graphColor : "transparent",
-                            borderColor: graphColor,
-                            borderWidth: chartType === "line" ? 2 : 0,
-                            pointBackgroundColor: chartType === "line" ? graphColor : undefined,
-                            pointBorderColor: chartType === "line" ? graphColor : undefined,
-                            pointHoverBackgroundColor: chartType === "line" ? graphColor : undefined,
-                            pointHoverBorderColor: chartType === "line" ? graphColor : undefined,
-                            borderRadius: chartType === "bar" ? 8 : undefined,
-                            borderSkipped: false,
-                            barPercentage: 0.8,
-                            categoryPercentage: 0.9,
-                        })),
-                    },
+                    data: data
+                        ? {
+                              labels: data.labels,
+                              datasets: data.datasets.map((dataset) => ({
+                                  ...dataset,
+                                  backgroundColor: chartType === "bar" ? graphColor : "transparent",
+                                  borderColor: graphColor,
+                                  borderWidth: chartType === "line" ? 2 : 0,
+                                  pointBackgroundColor: chartType === "line" ? graphColor : undefined,
+                                  pointBorderColor: chartType === "line" ? graphColor : undefined,
+                                  pointHoverBackgroundColor: chartType === "line" ? graphColor : undefined,
+                                  pointHoverBorderColor: chartType === "line" ? graphColor : undefined,
+                                  borderRadius: chartType === "bar" ? 8 : undefined,
+                                  borderSkipped: false,
+                                  barPercentage: 0.8,
+                                  categoryPercentage: 0.9,
+                              })),
+                          }
+                        : { labels: [], datasets: [] },
                     options: {
                         responsive: false,
                         maintainAspectRatio: false,
@@ -113,6 +117,18 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({
                         },
                         scales: {
                             x: {
+                                type: "time",
+                                time: {
+                                    unit: "day",
+                                    displayFormats: {
+                                        day: "yyyy-MM-dd",
+                                    },
+                                },
+                                adapters: {
+                                    date: {
+                                        locale: enUS,
+                                    },
+                                },
                                 title: {
                                     display: xAxisLabel !== "",
                                     text: xAxisLabel,
@@ -126,8 +142,8 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({
                                         size: textSize === "xlarge" ? 14 : textSize === "large" ? 12 : 10,
                                     },
                                     color: theme === "dark" ? "white" : "black",
-                                    maxRotation: 0,
-                                    minRotation: 0,
+                                    maxRotation: 45,
+                                    minRotation: 45,
                                 },
                             },
                             y: {

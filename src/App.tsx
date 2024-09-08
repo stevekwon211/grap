@@ -118,6 +118,27 @@ function App() {
         setGraphColor(color);
     };
 
+    // 데이터 변환 함수 추가
+    const transformData = (rawData: Record<string, string | number>[]) => {
+        if (!rawData || rawData.length === 0) return null;
+
+        const headers = Object.keys(rawData[0]);
+        const dateKey = headers[0]; // 첫 번째 열을 날짜로 가정
+        const labels = rawData.map((row) => new Date(String(row[dateKey])).toISOString());
+        const datasets = headers.slice(1).map((header) => ({
+            label: header,
+            data: rawData.map((row) => ({
+                x: new Date(String(row[dateKey])).toISOString(),
+                y: Number(row[header]) || 0,
+            })),
+        }));
+
+        return {
+            labels,
+            datasets,
+        };
+    };
+
     return (
         <div className="flex h-screen">
             <Sidebar
@@ -141,15 +162,7 @@ function App() {
                 {data && (
                     <div style={{ width: "100%", height: "100%", maxWidth: "1600px", maxHeight: "1200px" }}>
                         <GraphRenderer
-                            data={{
-                                labels: data.map((item) => item.label as string),
-                                datasets: [
-                                    {
-                                        label: "Data",
-                                        data: data.map((item) => Number(item.value)),
-                                    },
-                                ],
-                            }}
+                            data={transformData(data)}
                             chartRef={chartRef}
                             chartType={chartType}
                             theme={theme}

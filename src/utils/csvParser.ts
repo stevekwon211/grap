@@ -11,7 +11,12 @@ export const parseCSV = (file: File): Promise<Record<string, string | number>[]>
                     const parsedData = rows.map((row) => {
                         const rowData: Record<string, string | number> = {};
                         headers.forEach((header, index) => {
-                            rowData[header] = isNaN(Number(row[index])) ? row[index] : Number(row[index]);
+                            // 첫 번째 열을 날짜로 가정
+                            if (index === 0) {
+                                rowData[header] = row[index];
+                            } else {
+                                rowData[header] = isNaN(Number(row[index])) ? row[index] : Number(row[index]);
+                            }
                         });
                         return rowData;
                     });

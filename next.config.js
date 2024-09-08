@@ -5,6 +5,7 @@ const nextConfig = {
         config.resolve.alias["@"] = require("path").resolve(__dirname);
         return config;
     },
+    transpilePackages: ["chartjs-adapter-date-fns", "date-fns"],
 };
 
 module.exports = nextConfig;
