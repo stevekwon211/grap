@@ -8,7 +8,7 @@ interface SelectProps extends React.HTMLAttributes<HTMLSelectElement> {
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-    ({ className, children, placeholder, onValueChange, ...props }, ref) => {
+    ({ className, children, placeholder, onValueChange }, ref) => {
         const [isOpen, setIsOpen] = useState(false);
         const [selectedValue, setSelectedValue] = useState("");
 
@@ -21,6 +21,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         return (
             <div className="relative">
                 <button
+                    ref={ref as React.Ref<HTMLButtonElement>}
                     onClick={() => setIsOpen(!isOpen)}
                     className={`w-full px-3 py-2 text-left bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
                 >
@@ -29,7 +30,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 {isOpen && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
                         {React.Children.map(children, (child) => {
-                            if (React.isValidElement(child) && child.type === SelectItem) {
+                            if (React.isValidElement(child) && "value" in child.props) {
                                 return React.cloneElement(child, {
                                     onClick: () => handleSelect(child.props.value),
                                 });
@@ -42,6 +43,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         );
     }
 );
+
+Select.displayName = "Select";
 
 interface SelectItemProps {
     value: string;
