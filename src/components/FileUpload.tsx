@@ -1,38 +1,17 @@
-import React, { ChangeEvent, useRef } from "react";
-import { Button } from "@/components/ui/button";
+import React from "react";
 
 interface FileUploadProps {
     onFileUpload: (file: File) => void;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            onFileUpload(file);
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            onFileUpload(event.target.files[0]);
         }
     };
 
-    const handleButtonClick = () => {
-        fileInputRef.current?.click();
-    };
-
-    return (
-        <div>
-            <Button onClick={handleButtonClick} className="w-full btn-primary">
-                Upload CSV
-            </Button>
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept=".csv"
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-            />
-        </div>
-    );
+    return <input type="file" accept=".csv" onChange={handleFileChange} className="w-full" />;
 };
 
 export default FileUpload;

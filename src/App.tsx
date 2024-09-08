@@ -6,7 +6,10 @@ import Sidebar from "./components/Sidebar";
 import { parseCSV } from "./utils/csvParser";
 import { Chart } from "chart.js/auto";
 
-const GraphRenderer = dynamic(() => import("./components/GraphRenderer"), { ssr: false });
+const GraphRenderer = dynamic(() => import("./components/GraphRenderer"), {
+    ssr: false,
+    loading: () => <p>Loading...</p>,
+});
 
 function App() {
     const [data, setData] = useState<Record<string, string | number>[] | null>(null);

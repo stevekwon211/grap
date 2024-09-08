@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Select, SelectItem } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import FileUpload from "./FileUpload";
@@ -74,26 +74,46 @@ const Sidebar: React.FC<SidebarProps> = ({
                     className="btn-primary"
                 />
                 <Select onValueChange={onChartTypeChange}>
-                    <SelectItem value="bar">Bar Chart</SelectItem>
-                    <SelectItem value="line">Line Chart</SelectItem>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select chart type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="bar">Bar Chart</SelectItem>
+                        <SelectItem value="line">Line Chart</SelectItem>
+                    </SelectContent>
                 </Select>
 
                 <Select onValueChange={onThemeChange}>
-                    <SelectItem value="light">Light Theme</SelectItem>
-                    <SelectItem value="dark">Dark Theme</SelectItem>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select theme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="light">Light Theme</SelectItem>
+                        <SelectItem value="dark">Dark Theme</SelectItem>
+                    </SelectContent>
                 </Select>
 
                 <Select onValueChange={onTextSizeChange}>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="large">Large</SelectItem>
-                    <SelectItem value="xlarge">Extra Large</SelectItem>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select text size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="default">Default</SelectItem>
+                        <SelectItem value="large">Large</SelectItem>
+                        <SelectItem value="xlarge">Extra Large</SelectItem>
+                    </SelectContent>
                 </Select>
 
                 <Select onValueChange={onAspectRatioChange}>
-                    <SelectItem value="landscape">Landscape (16:9)</SelectItem>
-                    <SelectItem value="portrait">Portrait (9:16)</SelectItem>
-                    <SelectItem value="square">Square (1:1)</SelectItem>
-                    <SelectItem value="ultra-wide">Ultra-wide (21:9)</SelectItem>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select aspect ratio" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="landscape">Landscape (16:9)</SelectItem>
+                        <SelectItem value="portrait">Portrait (9:16)</SelectItem>
+                        <SelectItem value="square">Square (1:1)</SelectItem>
+                        <SelectItem value="ultra-wide">Ultra-wide (21:9)</SelectItem>
+                    </SelectContent>
                 </Select>
 
                 <div className="relative">
