@@ -15,6 +15,11 @@ function App() {
     const [chartType, setChartType] = useState("line");
     const [theme, setTheme] = useState("light");
     const [textSize, setTextSize] = useState("default");
+    const [aspectRatio, setAspectRatio] = useState<string>("landscape");
+    const [chartTitle, setChartTitle] = useState("");
+    const [xAxisLabel, setXAxisLabel] = useState("");
+    const [yAxisLabel, setYAxisLabel] = useState("");
+    const [graphColor, setGraphColor] = useState("#FF6384"); // 기본 색상 설정
 
     const handleFileUpload = async (file: File) => {
         try {
@@ -27,105 +32,53 @@ function App() {
         }
     };
 
-    const handleExport = (size: string) => {
-        if (chartRef.current) {
-            const canvas = chartRef.current;
-            const aspectRatio = {
-                landscape: 16 / 9,
-                portrait: 9 / 16,
-                square: 1,
-                "ultra-wide": 21 / 9,
-            };
-
-            const baseWidth = 1600;
-            const width = baseWidth;
-            const height = Math.round(baseWidth / aspectRatio[size as keyof typeof aspectRatio]);
-
-            const newCanvas = document.createElement("canvas");
-            newCanvas.width = width;
-            newCanvas.height = height;
-            const newCtx = newCanvas.getContext("2d");
-
-            if (newCtx) {
-                newCtx.fillStyle = theme === "dark" ? "#333" : "white";
-                newCtx.fillRect(0, 0, width, height);
-
-                // Get the current chart instance
-                const chartInstance = Chart.getChart(canvas);
-                if (chartInstance) {
-                    // Save the original dimensions and options
-                    const originalWidth = canvas.width;
-                    const originalHeight = canvas.height;
-                    const originalOptions = JSON.parse(JSON.stringify(chartInstance.options));
-
-                    // Calculate the scale factor
-                    const scaleFactor = Math.min(width / originalWidth, height / originalHeight);
-
-                    // Update the chart's options for the new size
-                    chartInstance.options.responsive = false;
-                    chartInstance.options.maintainAspectRatio = false;
-                    chartInstance.options.plugins!.title!.font!.size = Math.round(
-                        originalOptions.plugins.title.font.size * scaleFactor
-                    );
-                    chartInstance.options.plugins!.legend!.labels!.font!.size = Math.round(
-                        originalOptions.plugins.legend.labels.font.size * scaleFactor
-                    );
-                    chartInstance.options.scales!.x!.ticks!.font!.size = Math.round(
-                        originalOptions.scales.x.ticks.font.size * scaleFactor
-                    );
-                    chartInstance.options.scales!.y!.ticks!.font!.size = Math.round(
-                        originalOptions.scales.y.ticks.font.size * scaleFactor
-                    );
-
-                    // Resize the original canvas to match the new aspect ratio
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    // Update the chart's size and redraw
-                    chartInstance.resize();
-
-                    // Draw the resized chart onto the new canvas
-                    newCtx.drawImage(canvas, 0, 0, width, height);
-
-                    // Restore the original canvas dimensions and options
-                    canvas.width = originalWidth;
-                    canvas.height = originalHeight;
-                    chartInstance.options = originalOptions;
-                    chartInstance.resize();
-                }
-
-                // Apply corner radius to the exported image
-                newCtx.globalCompositeOperation = "destination-in";
-                newCtx.beginPath();
-                newCtx.moveTo(8, 0);
-                newCtx.lineTo(width - 8, 0);
-                newCtx.quadraticCurveTo(width, 0, width, 8);
-                newCtx.lineTo(width, height - 8);
-                newCtx.quadraticCurveTo(width, height, width - 8, height);
-                newCtx.lineTo(8, height);
-                newCtx.quadraticCurveTo(0, height, 0, height - 8);
-                newCtx.lineTo(0, 8);
-                newCtx.quadraticCurveTo(0, 0, 8, 0);
-                newCtx.closePath();
-                newCtx.fill();
-
-                const dataUrl = newCanvas.toDataURL("image/png");
-                const link = document.createElement("a");
-                link.download = `chart-${size}.png`;
-                link.href = dataUrl;
-                link.click();
-            }
-        }
-    };
-
     const handleCopy = () => {
         if (chartRef.current) {
-            chartRef.current.toBlob((blob) => {
-                if (blob) {
-                    const item = new ClipboardItem({ "image/png": blob });
-                    navigator.clipboard.write([item]);
+            const canvas = chartRef.current;
+            const chartInstance = Chart.getChart(canvas);
+
+            if (chartInstance) {
+                const aspectRatioValues = {
+                    landscape: 16 / 9,
+                    portrait: 9 / 16,
+                    square: 1,
+                    "ultra-wide": 21 / 9,
+                };
+
+                const ratio = aspectRatioValues[aspectRatio as keyof typeof aspectRatioValues];
+                const baseWidth = 1600;
+                const width = baseWidth;
+                const height = Math.round(width / ratio);
+
+                // Create a new canvas with the correct aspect ratio
+                const newCanvas = document.createElement("canvas");
+                newCanvas.width = width;
+                newCanvas.height = height;
+                const ctx = newCanvas.getContext("2d");
+
+                if (ctx) {
+                    // Set background color based on theme
+                    ctx.fillStyle = theme === "dark" ? "#333" : "white";
+                    ctx.fillRect(0, 0, width, height);
+
+                    // Calculate scaling factor
+                    const scale = Math.min(width / canvas.width, height / canvas.height);
+                    const scaledWidth = canvas.width * scale;
+                    const scaledHeight = canvas.height * scale;
+                    const x = (width - scaledWidth) / 2;
+                    const y = (height - scaledHeight) / 2;
+
+                    // Draw the original chart onto the new canvas, maintaining its aspect ratio
+                    ctx.drawImage(canvas, x, y, scaledWidth, scaledHeight);
+
+                    newCanvas.toBlob((blob) => {
+                        if (blob) {
+                            const item = new ClipboardItem({ "image/png": blob });
+                            navigator.clipboard.write([item]);
+                        }
+                    });
                 }
-            });
+            }
         }
     };
 
@@ -141,26 +94,59 @@ function App() {
         setTextSize(size);
     };
 
+    const handleAspectRatioChange = (ratio: string) => {
+        setAspectRatio(ratio);
+    };
+
+    const handleChartTitleChange = (title: string) => {
+        setChartTitle(title);
+    };
+
+    const handleXAxisLabelChange = (label: string) => {
+        setXAxisLabel(label);
+    };
+
+    const handleYAxisLabelChange = (label: string) => {
+        setYAxisLabel(label);
+    };
+
+    const handleColorChange = (color: string) => {
+        setGraphColor(color);
+    };
+
     return (
         <div className="flex h-screen">
             <Sidebar
-                onExport={handleExport}
                 onCopy={handleCopy}
                 onChartTypeChange={handleChartTypeChange}
                 onThemeChange={handleThemeChange}
                 onTextSizeChange={handleTextSizeChange}
                 onFileUpload={handleFileUpload}
+                onAspectRatioChange={handleAspectRatioChange}
+                currentAspectRatio={aspectRatio}
+                onChartTitleChange={handleChartTitleChange}
+                onXAxisLabelChange={handleXAxisLabelChange}
+                onYAxisLabelChange={handleYAxisLabelChange}
+                chartTitle={chartTitle}
+                xAxisLabel={xAxisLabel}
+                yAxisLabel={yAxisLabel}
+                onColorChange={handleColorChange}
             />
-            <div className="flex-1 flex items-center justify-center p-6 overflow-hidden">
+            <div className="flex-1 flex items-center justify-center p-6 bg-white graph-container">
                 {error && <p className="text-red-500">{error}</p>}
                 {data && (
-                    <div className="w-full h-full max-w-[1600px] max-h-[1200px] overflow-hidden">
+                    <div style={{ width: "100%", height: "100%", maxWidth: "1600px", maxHeight: "1200px" }}>
                         <GraphRenderer
                             data={data}
                             chartRef={chartRef}
                             chartType={chartType}
                             theme={theme}
                             textSize={textSize}
+                            aspectRatio={aspectRatio}
+                            chartTitle={chartTitle}
+                            xAxisLabel={xAxisLabel}
+                            yAxisLabel={yAxisLabel}
+                            graphColor={graphColor}
                         />
                     </div>
                 )}

@@ -15,63 +15,88 @@ interface GraphRendererProps {
     chartType: string;
     theme: string;
     textSize: string;
+    aspectRatio: string;
+    chartTitle: string;
+    xAxisLabel: string;
+    yAxisLabel: string;
+    graphColor: string;
 }
 
-const GraphRenderer: React.FC<GraphRendererProps> = ({ data, chartRef, chartType, theme, textSize }) => {
+const GraphRenderer: React.FC<GraphRendererProps> = ({
+    data,
+    chartRef,
+    chartType,
+    theme,
+    textSize,
+    aspectRatio,
+    chartTitle,
+    xAxisLabel,
+    yAxisLabel,
+    graphColor,
+}) => {
     const chartInstance = useRef<Chart | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (chartRef.current) {
+        if (chartRef.current && containerRef.current) {
             const ctx = chartRef.current.getContext("2d");
             if (ctx) {
                 if (chartInstance.current) {
                     chartInstance.current.destroy();
                 }
 
-                // Ensure the canvas size respects the max dimensions
-                const containerWidth = chartRef.current.parentElement?.clientWidth || 1600;
-                const containerHeight = chartRef.current.parentElement?.clientHeight || 1200;
-                chartRef.current.width = Math.min(containerWidth, 1600);
-                chartRef.current.height = Math.min(containerHeight, 1200);
-
-                const chartJsType = (type: string): keyof ChartTypeRegistry => {
-                    switch (type) {
-                        case "bar":
-                            return "bar";
-                        case "funnel":
-                            return "bar";
-                        default:
-                            return type as keyof ChartTypeRegistry;
-                    }
+                const aspectRatios = {
+                    landscape: 16 / 9,
+                    portrait: 9 / 16,
+                    square: 1,
+                    "ultra-wide": 21 / 9,
                 };
 
+                const ratio = aspectRatios[aspectRatio as keyof typeof aspectRatios];
+
+                const containerWidth = containerRef.current.clientWidth;
+                const containerHeight = containerRef.current.clientHeight;
+
+                let chartWidth, chartHeight;
+                if (containerWidth / containerHeight > ratio) {
+                    chartHeight = containerHeight;
+                    chartWidth = chartHeight * ratio;
+                } else {
+                    chartWidth = containerWidth;
+                    chartHeight = chartWidth / ratio;
+                }
+
+                chartRef.current.style.width = `${chartWidth}px`;
+                chartRef.current.style.height = `${chartHeight}px`;
+                chartRef.current.width = chartWidth;
+                chartRef.current.height = chartHeight;
+
                 const config: ChartConfiguration = {
-                    type: chartJsType(chartType),
+                    type: chartType as keyof ChartTypeRegistry,
                     data: {
-                        labels: data.labels,
-                        datasets: data.datasets.map((dataset, index) => ({
+                        ...data,
+                        datasets: data.datasets.map((dataset) => ({
                             ...dataset,
-                            borderColor: `hsl(${index * 137.5}, 70%, 50%)`,
-                            backgroundColor: `hsla(${index * 137.5}, 70%, 50%, 0.7)`,
-                            borderWidth: 2,
-                            tension: chartType === "line" ? 0.4 : undefined,
+                            backgroundColor: chartType === "bar" ? graphColor : "transparent",
+                            borderColor: graphColor,
+                            borderWidth: chartType === "line" ? 2 : 0,
+                            pointBackgroundColor: chartType === "line" ? graphColor : undefined,
+                            pointBorderColor: chartType === "line" ? graphColor : undefined,
+                            pointHoverBackgroundColor: chartType === "line" ? graphColor : undefined,
+                            pointHoverBorderColor: chartType === "line" ? graphColor : undefined,
+                            borderRadius: chartType === "bar" ? 8 : undefined,
+                            borderSkipped: false,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.9,
                         })),
                     },
                     options: {
-                        responsive: true,
+                        responsive: false,
                         maintainAspectRatio: false,
-                        layout: {
-                            padding: {
-                                top: 12,
-                                right: 12,
-                                bottom: 12,
-                                left: 12,
-                            },
-                        },
                         plugins: {
                             title: {
-                                display: true,
-                                text: "CSV Data Visualization",
+                                display: chartTitle !== "",
+                                text: chartTitle,
                                 font: {
                                     size: textSize === "xlarge" ? 24 : textSize === "large" ? 20 : 16,
                                 },
@@ -89,8 +114,8 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({ data, chartRef, chartType
                         scales: {
                             x: {
                                 title: {
-                                    display: true,
-                                    text: "Labels",
+                                    display: xAxisLabel !== "",
+                                    text: xAxisLabel,
                                     font: {
                                         size: textSize === "xlarge" ? 16 : textSize === "large" ? 14 : 12,
                                     },
@@ -101,12 +126,14 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({ data, chartRef, chartType
                                         size: textSize === "xlarge" ? 14 : textSize === "large" ? 12 : 10,
                                     },
                                     color: theme === "dark" ? "white" : "black",
+                                    maxRotation: 0,
+                                    minRotation: 0,
                                 },
                             },
                             y: {
                                 title: {
-                                    display: true,
-                                    text: "Values",
+                                    display: yAxisLabel !== "",
+                                    text: yAxisLabel,
                                     font: {
                                         size: textSize === "xlarge" ? 16 : textSize === "large" ? 14 : 12,
                                     },
@@ -118,15 +145,24 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({ data, chartRef, chartType
                                     },
                                     color: theme === "dark" ? "white" : "black",
                                 },
+                                beginAtZero: true,
                             },
                         },
                         elements: {
                             line: {
-                                borderWidth: 2,
                                 tension: 0.4,
                             },
                             point: {
-                                radius: 0,
+                                radius: chartType === "line" ? 4 : 0,
+                                hoverRadius: chartType === "line" ? 6 : 0,
+                            },
+                        },
+                        layout: {
+                            padding: {
+                                left: 12,
+                                right: 12,
+                                top: 12,
+                                bottom: 12,
                             },
                         },
                     },
@@ -141,14 +177,6 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({ data, chartRef, chartType
                     ctx.canvas.style.backgroundColor = "white";
                 }
 
-                if (chartType === "funnel") {
-                    config.data.datasets.forEach((dataset) => {
-                        dataset.data = dataset.data.map(
-                            (value, index, array) => (value * (array.length - index)) / array.length
-                        );
-                    });
-                }
-
                 chartInstance.current = new Chart(ctx, config);
             }
         }
@@ -158,20 +186,29 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({ data, chartRef, chartType
                 chartInstance.current.destroy();
             }
         };
-    }, [data, chartRef, chartType, theme, textSize]);
+    }, [data, chartRef, chartType, theme, textSize, aspectRatio, chartTitle, xAxisLabel, yAxisLabel, graphColor]);
 
     return (
         <div
+            ref={containerRef}
             style={{
                 width: "100%",
                 height: "100%",
-                maxWidth: "1600px",
-                maxHeight: "1200px",
-                borderRadius: "8px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "12px",
                 overflow: "hidden",
             }}
         >
-            <canvas ref={chartRef} style={{ width: "100%", height: "100%" }} />
+            <canvas
+                ref={chartRef}
+                style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    borderRadius: "12px",
+                }}
+            />
         </div>
     );
 };
