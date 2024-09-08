@@ -124,7 +124,7 @@ function App() {
                 onTextSizeChange={handleTextSizeChange}
                 onFileUpload={handleFileUpload}
                 onAspectRatioChange={handleAspectRatioChange}
-                currentAspectRatio={aspectRatio}
+                // currentAspectRatio={aspectRatio} // 이 줄을 제거합니다
                 onChartTitleChange={handleChartTitleChange}
                 onXAxisLabelChange={handleXAxisLabelChange}
                 onYAxisLabelChange={handleYAxisLabelChange}

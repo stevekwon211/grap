@@ -12,7 +12,6 @@ interface SidebarProps {
     onTextSizeChange: (size: string) => void;
     onFileUpload: (file: File) => void;
     onAspectRatioChange: (ratio: string) => void;
-    currentAspectRatio: string;
     onChartTitleChange: (title: string) => void;
     onXAxisLabelChange: (label: string) => void;
     onYAxisLabelChange: (label: string) => void;
@@ -29,7 +28,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     onTextSizeChange,
     onFileUpload,
     onAspectRatioChange,
-    currentAspectRatio,
     onChartTitleChange,
     onXAxisLabelChange,
     onYAxisLabelChange,
@@ -75,23 +73,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                     onChange={(e) => onYAxisLabelChange(e.target.value)}
                     className="btn-primary"
                 />
-                <Select onValueChange={onChartTypeChange} className="btn-primary">
+                <Select onValueChange={onChartTypeChange}>
                     <SelectItem value="bar">Bar Chart</SelectItem>
                     <SelectItem value="line">Line Chart</SelectItem>
                 </Select>
 
-                <Select onValueChange={onThemeChange} className="btn-primary">
+                <Select onValueChange={onThemeChange}>
                     <SelectItem value="light">Light Theme</SelectItem>
                     <SelectItem value="dark">Dark Theme</SelectItem>
                 </Select>
 
-                <Select onValueChange={onTextSizeChange} className="btn-primary">
+                <Select onValueChange={onTextSizeChange}>
                     <SelectItem value="default">Default</SelectItem>
                     <SelectItem value="large">Large</SelectItem>
                     <SelectItem value="xlarge">Extra Large</SelectItem>
                 </Select>
 
-                <Select onValueChange={onAspectRatioChange} className="btn-primary">
+                <Select onValueChange={onAspectRatioChange}>
                     <SelectItem value="landscape">Landscape (16:9)</SelectItem>
                     <SelectItem value="portrait">Portrait (9:16)</SelectItem>
                     <SelectItem value="square">Square (1:1)</SelectItem>

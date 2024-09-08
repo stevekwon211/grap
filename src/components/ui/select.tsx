@@ -4,11 +4,10 @@ interface SelectProps extends React.HTMLAttributes<HTMLSelectElement> {
     onValueChange: (value: string) => void;
     children: React.ReactNode;
     placeholder?: string;
-    className?: string;
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-    ({ className, children, placeholder, onValueChange }, ref) => {
+    ({ children, placeholder, onValueChange, ...props }, ref) => {
         const [isOpen, setIsOpen] = useState(false);
         const [selectedValue, setSelectedValue] = useState("");
 
@@ -23,16 +22,16 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 <button
                     ref={ref as React.Ref<HTMLButtonElement>}
                     onClick={() => setIsOpen(!isOpen)}
-                    className={`w-full px-3 py-2 text-left bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+                    className={`w-full px-3 py-2 text-left bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${props.className}`}
                 >
                     {selectedValue || placeholder || "Select..."}
                 </button>
                 {isOpen && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
                         {React.Children.map(children, (child) => {
-                            if (React.isValidElement(child) && "value" in child.props) {
+                            if (React.isValidElement<SelectItemProps>(child) && "value" in child.props) {
                                 return React.cloneElement(child, {
-                                    onClick: () => handleSelect(child.props.value as string),
+                                    onClick: () => handleSelect(child.props.value),
                                 });
                             }
                             return child;
@@ -49,7 +48,7 @@ Select.displayName = "Select";
 interface SelectItemProps {
     value: string;
     children: React.ReactNode;
-    onClick?: () => void;
+    onClick?: (value: string) => void;
 }
 
 export const SelectItem: React.FC<SelectItemProps> = ({ value, children, onClick }) => {
