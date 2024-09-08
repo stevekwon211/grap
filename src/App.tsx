@@ -123,14 +123,11 @@ function App() {
         if (!rawData || rawData.length === 0) return null;
 
         const headers = Object.keys(rawData[0]);
-        const dateKey = headers[0]; // 첫 번째 열을 날짜로 가정
-        const labels = rawData.map((row) => new Date(String(row[dateKey])).toISOString());
+        const dateKey = headers[0]; // Assuming first column is date
+        const labels = rawData.map((row) => row[dateKey] as string);
         const datasets = headers.slice(1).map((header) => ({
             label: header,
-            data: rawData.map((row) => ({
-                x: new Date(String(row[dateKey])).toISOString(),
-                y: Number(row[header]) || 0,
-            })),
+            data: rawData.map((row) => Number(row[header]) || 0),
         }));
 
         return {

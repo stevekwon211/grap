@@ -10,7 +10,7 @@ interface GraphRendererProps {
         labels: string[];
         datasets: {
             label: string;
-            data: { x: string; y: number }[];
+            data: number[];
         }[];
     } | null;
     chartRef: React.RefObject<HTMLCanvasElement>;
@@ -120,6 +120,7 @@ const GraphRenderer: React.FC<GraphRendererProps> = ({
                                 type: "time",
                                 time: {
                                     unit: "day",
+                                    parser: "yyyy-MM-dd",
                                     displayFormats: {
                                         day: "yyyy-MM-dd",
                                     },
