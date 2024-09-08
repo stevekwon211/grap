@@ -12,7 +12,7 @@ interface SidebarProps {
     onTextSizeChange: (size: string) => void;
     onFileUpload: (file: File) => void;
     onAspectRatioChange: (ratio: string) => void;
-    currentAspectRatio: string; // 이 줄을 추가합니다
+    currentAspectRatio: string;
     onChartTitleChange: (title: string) => void;
     onXAxisLabelChange: (label: string) => void;
     onYAxisLabelChange: (label: string) => void;
@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     onTextSizeChange,
     onFileUpload,
     onAspectRatioChange,
-    // Remove currentAspectRatio from props if not used
+    currentAspectRatio,
     onChartTitleChange,
     onXAxisLabelChange,
     onYAxisLabelChange,
@@ -37,7 +37,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     xAxisLabel,
     yAxisLabel,
     onColorChange,
-    currentAspectRatio, // 이 줄을 추가합니다
 }) => {
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [currentColor, setCurrentColor] = useState("#FF6384");
@@ -76,23 +75,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                     onChange={(e) => onYAxisLabelChange(e.target.value)}
                     className="btn-primary"
                 />
-                <Select onValueChange={onChartTypeChange} placeholder="Select chart type" className="btn-primary">
+                <Select onValueChange={onChartTypeChange} className="btn-primary">
                     <SelectItem value="bar">Bar Chart</SelectItem>
                     <SelectItem value="line">Line Chart</SelectItem>
                 </Select>
 
-                <Select onValueChange={onThemeChange} placeholder="Select theme" className="btn-primary">
+                <Select onValueChange={onThemeChange} className="btn-primary">
                     <SelectItem value="light">Light Theme</SelectItem>
                     <SelectItem value="dark">Dark Theme</SelectItem>
                 </Select>
 
-                <Select onValueChange={onTextSizeChange} placeholder="Select text size" className="btn-primary">
+                <Select onValueChange={onTextSizeChange} className="btn-primary">
                     <SelectItem value="default">Default</SelectItem>
                     <SelectItem value="large">Large</SelectItem>
                     <SelectItem value="xlarge">Extra Large</SelectItem>
                 </Select>
 
-                <Select onValueChange={onAspectRatioChange} placeholder="Select aspect ratio" className="btn-primary">
+                <Select onValueChange={onAspectRatioChange} className="btn-primary">
                     <SelectItem value="landscape">Landscape (16:9)</SelectItem>
                     <SelectItem value="portrait">Portrait (9:16)</SelectItem>
                     <SelectItem value="square">Square (1:1)</SelectItem>
@@ -106,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     >
                         <span>Color</span>
                         <div
-                            className="w-2 h-2 rounded-full border border-gray-300" // 여기를 w-3 h-3에서 w-2 h-2로 변경
+                            className="w-2 h-2 rounded-full border border-gray-300"
                             style={{ backgroundColor: currentColor }}
                         />
                     </Button>
