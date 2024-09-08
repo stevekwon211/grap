@@ -27,7 +27,7 @@ function App() {
                 setData(parsedData);
                 setError(null);
             })
-            .catch((err) => {
+            .catch(() => {
                 setError("Error parsing CSV file. Please check the file format.");
                 setData(null);
             });
